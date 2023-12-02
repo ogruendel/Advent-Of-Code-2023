@@ -11,5 +11,6 @@ public class Main {
 
         Game game = new Game(12, 13, 14);
         System.out.println(game.solvePart1(input));
+        System.out.println(game.solvePart2(input));
     }
 }
