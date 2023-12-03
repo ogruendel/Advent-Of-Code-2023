@@ -21,4 +21,24 @@ public class File {
         }
         return list;
     }
+
+    public static List<List<Character>> listOfListFromFile(String path) {
+        String line;
+        List<Character> row = new ArrayList<>();
+        List<List<Character>> list = new ArrayList<>();
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(path));
+            while ((line = reader.readLine()) != null) {
+                for (int i = 0; i <= line.length() - 1; i++) {
+                    row.add(line.charAt(i));
+                }
+                list.add(row);
+                row = new ArrayList<>();
+            }
+            reader.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return list;
+    }
 }
