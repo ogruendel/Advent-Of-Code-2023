@@ -4,9 +4,9 @@ public class IntPair {
     private final int row;
     private final int col;
 
-    public IntPair(int x, int y) {
-        this.row =  x;
-        this.col = y;
+    public IntPair(int row, int col) {
+        this.row =  row;
+        this.col = col;
     }
 
     public int getRow() {

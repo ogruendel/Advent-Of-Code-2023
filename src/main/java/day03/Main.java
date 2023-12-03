@@ -1,7 +1,6 @@
 package day03;
 
 import util.File;
-import util.IntPair;
 
 import java.util.List;
 
@@ -11,6 +10,6 @@ public class Main {
         List<List<Character>> test = File.listOfListFromFile("src/main/java/day03/test.txt");
 
         System.out.println(Schematic.solvePart1(input));
-        System.out.println(Schematic.solvePart1(test));
+        System.out.println(Schematic.solvePart2(input));
     }
 }
