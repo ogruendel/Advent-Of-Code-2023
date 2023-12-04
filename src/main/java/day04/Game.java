@@ -20,7 +20,6 @@ public class Game {
 
     public static int solvePart2(List<String> input) {
         List<Card> cards = new ArrayList<>();
-        List<Card> finalCards = new ArrayList<>();
 
         for (String game : input) {
             Card card = new Card(splitNumbers(game).get(0), splitNumbers(game).get(1), getCardValue(splitNumbers(game)), getGameID(game));
@@ -29,19 +28,19 @@ public class Game {
         }
 
         for (int i = 0; i < cards.size(); i++) {
-            finalCards.add(cards.get(i));
-            List<Card> cardsToAdd = new ArrayList<>();
-
-            for (int j = 0; j < cards.get(i).getMatchingNumbers(); j++) {
-                cardsToAdd.add(cards.get(i + j + 1));
-            }
-
-            for (int j = 0; j < amountInList(cards.get(i), finalCards); j++) {
-                finalCards.addAll(cardsToAdd);
+            for (int j = 0; j < cards.get(i).getOwned(); j++) {
+                for (int index = 0; index < cards.get(i).getMatchingNumbers(); index++) {
+                    cards.get(i + index + 1).setOwned(cards.get(i + index + 1).getOwned() + 1);
+                }
             }
         }
 
-        return finalCards.size();
+        int solution = 0;
+        for (Card card : cards) {
+            solution += card.getOwned();
+        }
+
+        return solution;
     }
 
     private static int amountInList(Card card, List<Card> cards) {

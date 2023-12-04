@@ -3,11 +3,12 @@ package day04;
 import java.util.List;
 
 public class Card {
-    private final List<Integer> winningNumbers;
-    private final List<Integer> drawnNumbers;
-    private final int value;
     private final int id;
     private int matchingNumbers = 0;
+    private int owned = 1;
+    private final int value;
+    private final List<Integer> winningNumbers;
+    private final List<Integer> drawnNumbers;
 
     public Card(List<Integer> winningNumbers, List<Integer> drawnNumbers, int value, int id) {
         this.winningNumbers = winningNumbers;
@@ -27,6 +28,7 @@ public class Card {
     public int getValue() {
         return value;
     }
+
     public int getId() {
         return id;
     }
@@ -35,7 +37,15 @@ public class Card {
         return matchingNumbers;
     }
 
+    public int getOwned() {
+        return owned;
+    }
+
     public void setMatchingNumbers(int matchingNumbers) {
         this.matchingNumbers = matchingNumbers;
+    }
+
+    public void setOwned(int owned) {
+        this.owned = owned;
     }
 }
