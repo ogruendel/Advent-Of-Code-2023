@@ -10,5 +10,6 @@ public class Main {
         List<String> test = File.listFromFile("src/main/java/day06/test.txt");
 
         System.out.println(Race.solvePart1(input));
+        System.out.println(Race.solvePart2(input));
     }
 }

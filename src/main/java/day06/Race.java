@@ -4,9 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Race {
+
     public static int solvePart1(List<String> input) {
-        List<Integer> raceTimes = getRaceValues(input.get(0));
-        List<Integer> raceDistances = getRaceValues(input.get(1));
+        return solve(getRaceValues(input.get(0)), getRaceValues(input.get(1)));
+    }
+    public static int solvePart2(List<String> input) {
+        return solve(List.of(concatenateRaceValues(getRaceValues(input.get(0)))), List.of(concatenateRaceValues(getRaceValues(input.get(1)))));
+    }
+    private static int solve(List<Long> raceTimes, List<Long> raceDistances) {
         int raceValue = 1;
 
         for (int i = 0; i < raceTimes.size(); i++) {
@@ -20,17 +25,24 @@ public class Race {
             }
             raceValue *= margin;
         }
-
         return raceValue;
     }
 
-    private static List<Integer> getRaceValues(String input) {
-        List<Integer> output = new ArrayList<>();
+    private static List<Long> getRaceValues(String input) {
+        List<Long> output = new ArrayList<>();
         for (String element : input.split("\\s")) {
             if (element.matches("\\d+")) {
-                output.add(Integer.parseInt(element));
+                output.add(Long.parseLong(element));
             }
         }
         return output;
+    }
+
+    private static long concatenateRaceValues(List<Long> input) {
+        StringBuilder output = new StringBuilder();
+        for (long value : input) {
+            output.append(value);
+        }
+        return Long.parseLong(output.toString());
     }
 }
