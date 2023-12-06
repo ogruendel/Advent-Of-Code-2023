@@ -41,4 +41,23 @@ public class File {
         }
         return list;
     }
+
+    public static String stringFromFile(String path) {
+        String line;
+        StringBuilder output = new StringBuilder();
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(path));
+            while ((line = reader.readLine()) != null) {
+                if (line.isBlank()) {
+                    output.append("\n");
+                } else {
+                    output.append(line).append(" ");
+                }
+            }
+            reader.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return output.toString();
+    }
 }
