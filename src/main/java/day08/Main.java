@@ -10,5 +10,6 @@ public class Main {
         List<String> input = File.listFromFile("src/main/java/day08/input.txt");
 
         System.out.println(Map.solvePart1(input));
+        System.out.println(Map.solvePart2(input));
     }
 }

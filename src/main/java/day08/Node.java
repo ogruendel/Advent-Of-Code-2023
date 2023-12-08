@@ -2,24 +2,30 @@ package day08;
 
 public class Node {
     private final String name;
-    private final String left;
-    private final String right;
+    private Node left;
+    private Node right;
 
-    public Node(String name, String left, String right) {
+    public Node(String name) {
         this.name = name;
-        this.left = left;
-        this.right = right;
     }
 
     public String getName() {
         return name;
     }
 
-    public String getLeft() {
+    public Node getLeft() {
         return left;
     }
 
-    public String getRight() {
+    public void setLeft(Node left) {
+        this.left = left;
+    }
+
+    public Node getRight() {
         return right;
+    }
+
+    public void setRight(Node right) {
+        this.right = right;
     }
 }
