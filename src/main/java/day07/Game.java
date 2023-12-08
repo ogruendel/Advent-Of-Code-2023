@@ -6,9 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 public class Game {
-    private static int startingRank = 1;
+    private static int startingRank;
 
     public static int solvePart1(List<String> input) {
+        startingRank = 1;
         List<Hand> fiveOfAKind = new ArrayList<>();
         List<Hand> fourOfAKind = new ArrayList<>();
         List<Hand> fullHouse = new ArrayList<>();
@@ -38,13 +39,13 @@ public class Game {
             }
         }
 
-        highCard = rankHands(highCard);
-        onePair = rankHands(onePair);
-        twoPair = rankHands(twoPair);
-        threeOfAKind = rankHands(threeOfAKind);
-        fullHouse = rankHands(fullHouse);
-        fourOfAKind = rankHands(fourOfAKind);
-        fiveOfAKind = rankHands(fiveOfAKind);
+        highCard = rankHandsPart1(highCard);
+        onePair = rankHandsPart1(onePair);
+        twoPair = rankHandsPart1(twoPair);
+        threeOfAKind = rankHandsPart1(threeOfAKind);
+        fullHouse = rankHandsPart1(fullHouse);
+        fourOfAKind = rankHandsPart1(fourOfAKind);
+        fiveOfAKind = rankHandsPart1(fiveOfAKind);
 
         List<Hand> allHands = new ArrayList<>();
         allHands.addAll(highCard);
@@ -62,30 +63,63 @@ public class Game {
         return totalWinnings;
     }
 
-    private static List<Hand> rankHands(List<Hand> hands) {
-        List<Hand> rankedHands = new ArrayList<>();
-        while (!hands.isEmpty()) {
-            Hand worstHand = hands.getFirst();
-            for (Hand hand : hands) {
-                for (int i = 0; i < 5; i++) {
-                    if (getCardValue(hand.getCards().charAt(i)) > getCardValue(worstHand.getCards().charAt(i))) {
-                        break;
-                    } else if (getCardValue(hand.getCards().charAt(i)) < getCardValue(worstHand.getCards().charAt(i))) {
-                        worstHand = hand;
-                        break;
-                    }
-                }
-            }
 
-            worstHand.setRank(startingRank);
-            startingRank++;
-            rankedHands.add(worstHand);
-            hands.remove(worstHand);
+    public static int solvePart2(List<String> input) {
+        startingRank = 1;
+        List<Hand> fiveOfAKind = new ArrayList<>();
+        List<Hand> fourOfAKind = new ArrayList<>();
+        List<Hand> fullHouse = new ArrayList<>();
+        List<Hand> threeOfAKind = new ArrayList<>();
+        List<Hand> twoPair = new ArrayList<>();
+        List<Hand> onePair = new ArrayList<>();
+        List<Hand> highCard = new ArrayList<>();
+
+        int totalWinnings = 0;
+
+        for (String s : input) {
+            Hand hand = new Hand(getCards(s), getBid(s));
+            if (isFiveOfAKind(getBestHandWithJoker(hand))) {
+                fiveOfAKind.add(hand);
+            } else if (isFourOfAKind(getBestHandWithJoker(hand))) {
+                fourOfAKind.add(hand);
+            } else if (isFullHouse(getBestHandWithJoker(hand))) {
+                fullHouse.add(hand);
+            } else if (isThreeOfAKind(getBestHandWithJoker(hand))) {
+                threeOfAKind.add(hand);
+            } else if (isTwoPair(getBestHandWithJoker(hand))) {
+                twoPair.add(hand);
+            } else if (isOnePair(getBestHandWithJoker(hand))) {
+                onePair.add(hand);
+            } else if (isHighCard(getBestHandWithJoker(hand))) {
+                highCard.add(hand);
+            }
         }
-        return rankedHands;
+
+        highCard = rankHandsPart2(highCard);
+        onePair = rankHandsPart2(onePair);
+        twoPair = rankHandsPart2(twoPair);
+        threeOfAKind = rankHandsPart2(threeOfAKind);
+        fullHouse = rankHandsPart2(fullHouse);
+        fourOfAKind = rankHandsPart2(fourOfAKind);
+        fiveOfAKind = rankHandsPart2(fiveOfAKind);
+
+        List<Hand> allHands = new ArrayList<>();
+        allHands.addAll(highCard);
+        allHands.addAll(onePair);
+        allHands.addAll(twoPair);
+        allHands.addAll(threeOfAKind);
+        allHands.addAll(fullHouse);
+        allHands.addAll(fourOfAKind);
+        allHands.addAll(fiveOfAKind);
+
+        for (Hand hand : allHands) {
+            totalWinnings += hand.getBid() * hand.getRank();
+        }
+
+        return totalWinnings;
     }
 
-    private static int getCardValue(Character card) {
+    private static int getCardValuePart1(Character card) {
         int value = 0;
         switch (card) {
             case '2' -> value = 1;
@@ -103,6 +137,99 @@ public class Game {
             case 'A' -> value = 13;
         }
         return value;
+    }
+
+    private static int getCardValuePart2(Character card) {
+        int value = 0;
+        switch (card) {
+            case 'J' -> value = 1;
+            case '2' -> value = 2;
+            case '3' -> value = 3;
+            case '4' -> value = 4;
+            case '5' -> value = 5;
+            case '6' -> value = 6;
+            case '7' -> value = 7;
+            case '8' -> value = 8;
+            case '9' -> value = 9;
+            case 'T' -> value = 10;
+            case 'Q' -> value = 11;
+            case 'K' -> value = 12;
+            case 'A' -> value = 13;
+        }
+        return value;
+    }
+
+    private static Hand getBestHandWithJoker(Hand hand) {
+        Map<Character, Integer> map = new HashMap<>();
+
+        for (int i = 0; i < hand.getCards().length(); i++) {
+            char key = hand.getCards().charAt(i);
+            if (map.containsKey(key)) {
+                int occurrences = map.get(key);
+                map.remove(key);
+                map.put(key, occurrences + 1);
+            } else {
+                map.put(key, 1);
+            }
+        }
+        char mostCard = 0;
+        for (char key : map.keySet()) {
+            if (mostCard == 0) {
+                mostCard = key;
+            } else {
+                if (map.get(key) > map.get(mostCard) && key != 'J') {
+                    mostCard = key;
+                }
+            }
+        }
+
+        return new Hand(hand.getCards().replace('J', mostCard), hand.getBid());
+    }
+
+    private static List<Hand> rankHandsPart1(List<Hand> hands) {
+        List<Hand> rankedHands = new ArrayList<>();
+        while (!hands.isEmpty()) {
+            Hand worstHand = hands.getFirst();
+            for (Hand hand : hands) {
+                for (int i = 0; i < 5; i++) {
+                    if (getCardValuePart1(hand.getCards().charAt(i)) > getCardValuePart1(worstHand.getCards().charAt(i))) {
+                        break;
+                    } else if (getCardValuePart1(hand.getCards().charAt(i)) < getCardValuePart1(worstHand.getCards().charAt(i))) {
+                        worstHand = hand;
+                        break;
+                    }
+                }
+            }
+
+            worstHand.setRank(startingRank);
+            startingRank++;
+            rankedHands.add(worstHand);
+            hands.remove(worstHand);
+        }
+        return rankedHands;
+    }
+
+    private static List<Hand> rankHandsPart2(List<Hand> hands) {
+        List<Hand> rankedHands = new ArrayList<>();
+        while (!hands.isEmpty()) {
+            Hand worstHand = hands.getFirst();
+            for (Hand hand : hands) {
+                for (int i = 0; i < 5; i++) {
+                    if (getCardValuePart2(hand.getCards().charAt(i)) > getCardValuePart2(worstHand.getCards().charAt(i))) {
+                        break;
+                    } else if (getCardValuePart2(hand.getCards().charAt(i)) < getCardValuePart2(worstHand.getCards().charAt(i))) {
+                        worstHand = hand;
+                        break;
+                    }
+                }
+            }
+
+            worstHand.setRank(startingRank);
+            startingRank++;
+            rankedHands.add(worstHand);
+            hands.remove(worstHand);
+        }
+        return rankedHands;
     }
 
     private static boolean isFiveOfAKind(Hand hand) {
