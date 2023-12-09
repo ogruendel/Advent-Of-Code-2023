@@ -5,6 +5,24 @@ import java.util.List;
 
 public class Report {
     public static int solvePart1(List<String> input) {
+        int predictionSum = 0;
+        List<Value> values = new ArrayList<>();
+
+        for (String line : input) {
+            values.add(splitValues(line));
+        }
+
+        for (Value value : values) {
+            while (!isZeroSequence(value.getMeasurements().getLast())) {
+                value.addMeasurement(getDifference(value.getMeasurements().getLast()));
+            }
+            predictionSum += getPrediction(value);
+        }
+
+        return predictionSum;
+    }
+
+    public static int solvePart2(List<String> input) {
         int historySum = 0;
         List<Value> values = new ArrayList<>();
 
@@ -16,9 +34,8 @@ public class Report {
             while (!isZeroSequence(value.getMeasurements().getLast())) {
                 value.addMeasurement(getDifference(value.getMeasurements().getLast()));
             }
-            historySum += getPrediction(value);
+            historySum += getHistory(value);
         }
-
         return historySum;
     }
 
@@ -61,6 +78,16 @@ public class Report {
         }
 
         return prediction;
+    }
+
+    private static int getHistory(Value value) {
+        int history = value.getMeasurements().getLast().getFirst();
+
+        for (int i = value.getMeasurements().size() - 1; i > 0; i--) {
+            history = value.getMeasurements().get(i - 1).getFirst() - history;
+        }
+
+        return history;
     }
 
 }
