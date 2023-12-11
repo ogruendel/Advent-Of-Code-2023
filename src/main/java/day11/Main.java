@@ -9,5 +9,6 @@ public class Main {
         List<List<Character>> input = File.listOfListFromFile("src/main/java/day11/input.txt");
 
         System.out.println(Universe.solvePart1(input));
+        System.out.println(Universe.solvePart2(input));
     }
 }

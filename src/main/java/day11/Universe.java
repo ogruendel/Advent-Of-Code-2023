@@ -5,14 +5,56 @@ import java.util.List;
 
 public class Universe {
     private static final List<Galaxy> galaxies = new ArrayList<>();
+    private static final List<Integer> expandedRows = new ArrayList<>();
+    private static final List<Integer> expandedCols = new ArrayList<>();
 
     public static int solvePart1(List<List<Character>> input) {
-        int sumOfDistances = 0;
-        populateGalaxies(expandUniverse(input));
+        galaxies.clear();
+        expandedRows.clear();
+        expandedCols.clear();
 
-        while (!galaxies.isEmpty()) {
+        int sumOfDistances = 0;
+        int expansionFactor = 2 - 1;
+        expandUniverse(input);
+        populateGalaxies(input);
+
+        while (galaxies.size() != 1) {
             for (int i = 0; i < galaxies.size(); i++) {
-                sumOfDistances += Math.abs(galaxies.getFirst().x() - galaxies.get(i).x()) + Math.abs(galaxies.getFirst().y() - galaxies.get(i).y());
+                int rowMultiplierFirst = 0;
+                int colMultiplierFirst = 0;
+                int rowMultiplierSecond = 0;
+                int colMultiplierSecond = 0;
+
+                for (Integer row : expandedRows) {
+                    if (galaxies.getFirst().x() < row) {
+                        break;
+                    } else {
+                        rowMultiplierFirst++;
+                    }
+                }
+                for (Integer row : expandedRows) {
+                    if (galaxies.get(i).x() < row) {
+                        break;
+                    } else {
+                        rowMultiplierSecond++;
+                    }
+                }
+                for (Integer col : expandedCols) {
+                    if (galaxies.getFirst().y() < col) {
+                        break;
+                    } else {
+                        colMultiplierFirst++;
+                    }
+                }
+                for (Integer col : expandedCols) {
+                    if (galaxies.get(i).y() < col) {
+                        break;
+                    } else {
+                        colMultiplierSecond++;
+                    }
+                }
+
+                sumOfDistances += Math.abs((rowMultiplierFirst * expansionFactor + galaxies.getFirst().x()) - (rowMultiplierSecond * expansionFactor + galaxies.get(i).x())) + Math.abs((colMultiplierFirst * expansionFactor + galaxies.getFirst().y()) - (colMultiplierSecond * expansionFactor + galaxies.get(i).y()));
             }
             galaxies.removeFirst();
         }
@@ -20,26 +62,71 @@ public class Universe {
         return sumOfDistances;
     }
 
-    private static List<List<Character>> expandUniverse(List<List<Character>> input) {
-        List<List<Character>> expandedUniverse = new ArrayList<>();
+    public static long solvePart2(List<List<Character>> input) {
+        galaxies.clear();
+        expandedRows.clear();
+        expandedCols.clear();
 
-        for (List<Character> row : input) {
+        long sumOfDistances = 0;
+        int expansionFactor = 1000000 - 1;
+        expandUniverse(input);
+        populateGalaxies(input);
+
+        while (galaxies.size() != 1) {
+            for (int i = 0; i < galaxies.size(); i++) {
+                int rowMultiplierFirst = 0;
+                int colMultiplierFirst = 0;
+                int rowMultiplierSecond = 0;
+                int colMultiplierSecond = 0;
+
+                for (Integer row : expandedRows) {
+                    if (galaxies.getFirst().x() > row) {
+                        rowMultiplierFirst++;
+                    }
+                    if (galaxies.get(i).x() > row) {
+                        rowMultiplierSecond++;
+                    }
+                }
+                for (Integer col : expandedCols) {
+                    if (galaxies.getFirst().y() < col) {
+                        break;
+                    } else {
+                        colMultiplierFirst++;
+                    }
+                }
+                for (Integer col : expandedCols) {
+                    if (galaxies.get(i).y() < col) {
+                        break;
+                    } else {
+                        colMultiplierSecond++;
+                    }
+                }
+
+                sumOfDistances += Math.abs((rowMultiplierFirst * expansionFactor + galaxies.getFirst().x()) - (rowMultiplierSecond * expansionFactor + galaxies.get(i).x())) + Math.abs((colMultiplierFirst * expansionFactor + galaxies.getFirst().y()) - (colMultiplierSecond * expansionFactor + galaxies.get(i).y()));
+            }
+            galaxies.removeFirst();
+        }
+
+        return sumOfDistances;
+    }
+
+    private static void expandUniverse(List<List<Character>> input) {
+        for (int row = 0; row < input.size(); row++) {
             boolean emptyRow = true;
-            for (Character c : row) {
+            for (Character c : input.get(row)) {
                 if (c != '.') {
                     emptyRow = false;
                     break;
                 }
             }
-            expandedUniverse.add(new ArrayList<>(row));
             if (emptyRow) {
-                expandedUniverse.add(new ArrayList<>(row));
+                expandedRows.add(row);
             }
         }
 
-        for (int col = 0; col < expandedUniverse.getFirst().size(); col++) {
+        for (int col = 0; col < input.getFirst().size(); col++) {
             boolean emptyCol = true;
-            for (List<Character> row : expandedUniverse) {
+            for (List<Character> row : input) {
                 if (row.get(col) != '.') {
                     emptyCol = false;
                     break;
@@ -47,14 +134,9 @@ public class Universe {
             }
 
             if (emptyCol) {
-                for (List<Character> newRow : expandedUniverse) {
-                    newRow.add(col, '.');
-                }
-                col++;
+                expandedCols.add(col);
             }
         }
-
-        return expandedUniverse;
     }
 
     private static void populateGalaxies(List<List<Character>> universe) {
@@ -66,6 +148,7 @@ public class Universe {
             }
         }
     }
+
     private static void printUniverse(List<List<Character>> input) {
         for (List<Character> line : input) {
             System.out.println(line);
